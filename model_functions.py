@@ -5,25 +5,23 @@ import chromadb
 import ollama
 
 bs_transformer = BeautifulSoupTransformer()
-client = chromadb.Client()
-collection = client.create_collection("new")
 
 
-def readNew(url):
-    loader = AsyncChromiumLoader([url])
-    body = bs_transformer.transform_documents(
-        loader.load(), tags_to_extract=["article"]
-    )
-    title = bs_transformer.transform_documents(loader.load(), tags_to_extract=["h1"])
+def readNew(url, collection):
+    loader = WebBaseLoader(url)
+    document = loader.load()
 
-    # embedding
+    title = document[0].metadata["title"]
+    body = document[0].page_content[:3000]
+
+    # Embedding
     str_body = str(body)
     str_title = str(title)
     response = ollama.embeddings(model="mxbai-embed-large", prompt=str_body)
     embedding = response["embedding"]
     collection.add(ids=[str_title], embeddings=[embedding], documents=[str_body])
 
-    # results
+    # Results
     response = ollama.embeddings(prompt=str_title, model="mxbai-embed-large")
     results = collection.query(query_embeddings=[response["embedding"]], n_results=1)
     data = results["documents"][0][0]
@@ -33,5 +31,6 @@ def readNew(url):
         prompt=f"Using this data: {data}. And based on the title {title} answer what happened? and why?",
     )
 
-    print(output["response"])
     collection.delete(ids=[str_title])
+
+    return str(output["response"])
