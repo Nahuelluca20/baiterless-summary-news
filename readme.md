@@ -69,4 +69,4 @@ This project is currently set up to use local models through Ollama. Ensure you 
 
 ## License
 
-[Add your chosen license here]
+[MIT](https://choosealicense.com/licenses/mit/)
