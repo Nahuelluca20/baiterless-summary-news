@@ -1,48 +1,22 @@
-from langchain_community.document_loaders import WebBaseLoader
-from langchain_community.document_loaders import AsyncChromiumLoader
-from langchain_community.document_transformers import BeautifulSoupTransformer
-import chromadb
-import ollama
+import streamlit as st
 
-bs_transformer = BeautifulSoupTransformer()
-client = chromadb.Client()
-collection = client.create_collection("new")
+# readNew(
+#     "https://www.infobae.com/deportes/2024/09/26/racing-bulls-despidio-a-daniel-ricciardo-tras-el-gp-de-singapur-y-anuncio-al-piloto-que-lo-reemplazara-en-la-formula-1/"
+# )
 
+# print("====================")
 
-def readNew(url):
-    loader = AsyncChromiumLoader([url])
-    body = bs_transformer.transform_documents(
-        loader.load(), tags_to_extract=["article"]
-    )
-    title = bs_transformer.transform_documents(loader.load(), tags_to_extract=["h1"])
+# readNew(
+#     "https://www.infobae.com/politica/2024/09/27/renuncio-el-ministro-de-salud-mario-russo/"
+# )
 
-    # embedding
-    str_body = str(body)
-    str_title = str(title)
-    response = ollama.embeddings(model="mxbai-embed-large", prompt=str_body)
-    embedding = response["embedding"]
-    collection.add(ids=[str_title], embeddings=[embedding], documents=[str_body])
+# readNew(
+#     "https://www.infobae.com/deportes/2024/09/26/a-cinco-fechas-para-el-final-de-la-temporada-regular-de-la-mls-el-inter-miami-de-messi-se-clasifico-a-una-copa-internacional/"
+# )
 
-    # results
-    response = ollama.embeddings(prompt=str_title, model="mxbai-embed-large")
-    results = collection.query(query_embeddings=[response["embedding"]], n_results=1)
-    data = results["documents"][0][0]
-
-    output = ollama.generate(
-        model="llama3.2",
-        prompt=f"Using this data: {data}. Summarize the news item and answer what the title of the news item says: {str_title}.",
-    )
-
-    print(output["response"])
-    collection.delete(ids=[str_title])
-
-
-readNew(
-    "https://www.infobae.com/deportes/2024/09/26/racing-bulls-despidio-a-daniel-ricciardo-tras-el-gp-de-singapur-y-anuncio-al-piloto-que-lo-reemplazara-en-la-formula-1/"
-)
-
-print("====================")
-
-readNew(
-    "https://www.infobae.com/politica/2024/09/27/renuncio-el-ministro-de-salud-mario-russo/"
+st.write(
+    """
+# My first app
+Hello *world!*
+"""
 )
