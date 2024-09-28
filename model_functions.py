@@ -1,8 +1,8 @@
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_community.document_loaders import AsyncChromiumLoader
 from langchain_community.document_transformers import BeautifulSoupTransformer
-import chromadb
 import ollama
+
 
 bs_transformer = BeautifulSoupTransformer()
 

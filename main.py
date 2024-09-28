@@ -12,8 +12,8 @@ else:
 
 st.write(
     """
-# My first app
-Hello *world!*
+# Baiterless
+Summary the news
 """
 )
 
@@ -21,5 +21,4 @@ title = st.text_input("New URL", placeholder="Add URl")
 if title:
     with st.spinner("Processing..."):
         response = readNew(title, collection)
-        print(response)
         st.write(response)
